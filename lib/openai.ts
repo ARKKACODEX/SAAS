@@ -4,12 +4,15 @@
  */
 
 import OpenAI from 'openai'
+import { openaiMock } from './openai-mock'
 import { prisma } from './db'
 import { withRetry } from './retry'
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-})
+export const openai = process.env.NODE_ENV === 'production'
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    })
+  : (openaiMock as any)
 
 /**
  * Generate chatbot response with context
@@ -149,7 +152,7 @@ export async function extractLeadInfo(conversationMessages: string[]) {
     const conversation = conversationMessages.join('\n')
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-1106-preview',
+      model: 'gpt-4-1106-preview', // Mantém o nome do modelo para o mock, mas não será usado
       messages: [
         {
           role: 'system',
@@ -199,7 +202,7 @@ export async function generateAppointmentSuggestions(params: {
 }) {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-1106-preview',
+      model: 'gpt-4-1106-preview', // Mantém o nome do modelo para o mock, mas não será usado
       messages: [
         {
           role: 'system',

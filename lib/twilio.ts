@@ -4,14 +4,17 @@
  */
 
 import twilio from 'twilio'
+import { twilioClientMock, provisionPhoneNumberMock, sendSMSMock, makeCallMock, getRecordingMock } from './twilio-mock'
 import { prisma } from './db'
 import { withRetry } from './retry'
 
 // Initialize Twilio client
-export const twilioClient = twilio(
-  process.env.TWILIO_ACCOUNT_SID!,
-  process.env.TWILIO_AUTH_TOKEN!
-)
+export const twilioClient = process.env.NODE_ENV === 'production'
+  ? twilio(
+      process.env.TWILIO_ACCOUNT_SID!,
+      process.env.TWILIO_AUTH_TOKEN!
+    )
+  : twilioClientMock as any
 
 /**
  * Provision a new phone number for a customer
@@ -21,6 +24,10 @@ export async function provisionPhoneNumber(params: {
   areaCode?: string
   country?: string
 }) {
+  if (process.env.NODE_ENV !== 'production') {
+    return provisionPhoneNumberMock(params)
+  }
+
   const { accountId, areaCode = '415', country = 'US' } = params
 
   try {
@@ -79,6 +86,10 @@ export async function sendSMS(params: {
   accountId: string
   contactId?: string
 }) {
+  if (process.env.NODE_ENV !== 'production') {
+    return sendSMSMock(params)
+  }
+
   try {
     const message = await withRetry(() =>
       twilioClient.messages.create({
@@ -131,6 +142,10 @@ export async function makeCall(params: {
   accountId: string
   contactId?: string
 }) {
+  if (process.env.NODE_ENV !== 'production') {
+    return makeCallMock(params)
+  }
+
   try {
     const call = await withRetry(() =>
       twilioClient.calls.create({
@@ -169,6 +184,10 @@ export async function makeCall(params: {
  * Get call recording
  */
 export async function getRecording(recordingSid: string) {
+  if (process.env.NODE_ENV !== 'production') {
+    return getRecordingMock(recordingSid)
+  }
+
   try {
     const recording = await twilioClient.recordings(recordingSid).fetch()
     return {
