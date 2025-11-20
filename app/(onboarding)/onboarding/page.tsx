@@ -154,73 +154,63 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-3xl">
-        {/* Progress */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold">Welcome to ReplyHub!</h1>
-            <Badge variant="outline">
-              Step {currentStep} of {STEPS.length}
-            </Badge>
-          </div>
-          <Progress value={progress} className="h-2" />
-        </div>
+	        {/* Steps indicator (Aprimorado) */}
+	        <div className="flex items-center justify-between mb-8 p-4 bg-white rounded-lg shadow-md">
+	          {STEPS.map((step, index) => {
+	            const isActive = currentStep === step.id
+	            const isCompleted = currentStep > step.id
 
-        {/* Steps indicator */}
-        <div className="flex items-center justify-between mb-8">
-          {STEPS.map((step, index) => {
-            const isActive = currentStep === step.id
-            const isCompleted = currentStep > step.id
+	            return (
+	              <div key={step.id} className="flex-1 flex items-center">
+	                <div className="flex flex-col items-center w-full">
+	                  <div
+	                    className={`h-10 w-10 rounded-full flex items-center justify-center mb-1 transition-colors duration-300 ${
+	                      isCompleted
+	                        ? 'bg-green-500 text-white'
+	                        : isActive
+	                        ? 'bg-primary text-white shadow-lg'
+	                        : 'bg-gray-100 text-gray-500 border border-gray-300'
+	                    }`}
+	                  >
+	                    {isCompleted ? (
+	                      <CheckCircle2 className="h-5 w-5" />
+	                    ) : (
+	                      <step.icon className="h-5 w-5" />
+	                    )}
+	                  </div>
+	                  <p
+	                    className={`text-xs font-medium text-center mt-1 ${
+	                      isActive ? 'text-primary font-bold' : 'text-gray-600'
+	                    }`}
+	                  >
+	                    {step.title}
+	                  </p>
+	                </div>
+	                {index < STEPS.length - 1 && (
+	                  <div className="flex-1 mx-2">
+	                    <Progress value={isCompleted ? 100 : isActive ? progress : 0} className="h-1" />
+	                  </div>
+	                )}
+	              </div>
+	            )
+	          })}
+	        </div>
 
-            return (
-              <div key={step.id} className="flex-1">
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`h-12 w-12 rounded-full flex items-center justify-center mb-2 ${
-                      isCompleted
-                        ? 'bg-green-500 text-white'
-                        : isActive
-                        ? 'bg-primary text-white'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <CheckCircle2 className="h-6 w-6" />
-                    ) : (
-                      <step.icon className="h-6 w-6" />
-                    )}
-                  </div>
-                  <p
-                    className={`text-sm font-medium text-center ${
-                      isActive ? 'text-primary' : 'text-gray-600'
-                    }`}
-                  >
-                    {step.title}
-                  </p>
-                </div>
-                {index < STEPS.length - 1 && (
-                  <div
-                    className={`h-1 w-full mt-6 ${
-                      isCompleted ? 'bg-green-500' : 'bg-gray-200'
-                    }`}
-                  />
-                )}
-              </div>
-            )
-          })}
-        </div>
+	        {/* Header e Descrição da Etapa */}
+	        <div className="mb-6 text-center">
+	          <h1 className="text-3xl font-extrabold text-gray-900">
+	            {STEPS[currentStep - 1].title}
+	          </h1>
+	          <p className="text-lg text-muted-foreground mt-2">
+	            {STEPS[currentStep - 1].description}
+	          </p>
+	        </div>
 
         {/* Step content */}
         <Card className="p-8">
           {currentStep === 1 && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">
-                  Tell us about your business
-                </h2>
-                <p className="text-muted-foreground">
-                  This helps us personalize ReplyHub for your needs
-                </p>
-              </div>
+
 
               <div className="space-y-4">
                 <div>
@@ -312,31 +302,29 @@ export default function OnboardingPage() {
 
           {currentStep === 2 && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">
-                  Get your business phone number
-                </h2>
-                <p className="text-muted-foreground">
-                  We'll provision a dedicated phone number for your business
-                </p>
-              </div>
 
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="areaCode">Preferred Area Code (optional)</Label>
-                  <Input
-                    id="areaCode"
-                    value={formData.areaCode}
-                    onChange={(e) =>
-                      setFormData({ ...formData, areaCode: e.target.value })
-                    }
-                    placeholder="e.g., 212, 415, 310"
-                    maxLength={3}
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Leave blank for any available number
-                  </p>
-                </div>
+
+	              <div className="space-y-4">
+	                <div className="p-3 border rounded-lg bg-yellow-50 border-yellow-200 text-yellow-800">
+	                  <p className="text-sm font-medium">
+	                    ⚠️ **Modo Demonstração Ativo:** Em ambiente de desenvolvimento, a compra do número é simulada (MOCK). O número real será provisionado em produção.
+	                  </p>
+	                </div>
+	                <div>
+	                  <Label htmlFor="areaCode">Preferred Area Code (optional)</Label>
+	                  <Input
+	                    id="areaCode"
+	                    value={formData.areaCode}
+	                    onChange={(e) =>
+	                      setFormData({ ...formData, areaCode: e.target.value })
+	                    }
+	                    placeholder="e.g., 212, 415, 310"
+	                    maxLength={3}
+	                  />
+	                  <p className="text-sm text-muted-foreground mt-1">
+	                    Leave blank for any available number
+	                  </p>
+	                </div>
 
                 <div className="p-4 border rounded-lg bg-blue-50">
                   <h3 className="font-medium mb-2">What you'll get:</h3>
@@ -365,14 +353,7 @@ export default function OnboardingPage() {
 
           {currentStep === 3 && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">
-                  Connect Google Calendar
-                </h2>
-                <p className="text-muted-foreground">
-                  Automatically create calendar events for appointments
-                </p>
-              </div>
+
 
               <div className="p-4 border rounded-lg bg-blue-50">
                 <h3 className="font-medium mb-2">Benefits:</h3>
@@ -402,33 +383,33 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* Navigation */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              disabled={currentStep === 1 || loading}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
+	          {/* Navigation */}
+	          <div className="flex items-center justify-between mt-8 pt-6 border-t">
+	            <Button
+	              variant="outline"
+	              onClick={handleBack}
+	              disabled={currentStep === 1 || loading}
+	            >
+	              <ArrowLeft className="mr-2 h-4 w-4" />
+	              Back
+	            </Button>
 
-            <div className="flex items-center space-x-2">
-              {currentStep === 3 && (
-                <Button variant="ghost" onClick={handleSkip} disabled={loading}>
-                  Skip for now
-                </Button>
-              )}
-              <Button onClick={handleNext} disabled={loading}>
-                {loading
-                  ? 'Processing...'
-                  : currentStep === 3
-                  ? 'Connect Calendar'
-                  : 'Continue'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+	            <div className="flex items-center space-x-2">
+	              {currentStep === 3 && (
+	                <Button variant="ghost" onClick={handleSkip} disabled={loading}>
+	                  Skip for now
+	                </Button>
+	              )}
+	              <Button onClick={handleNext} disabled={loading}>
+	                {loading
+	                  ? 'Processing...'
+	                  : currentStep === 3
+	                  ? 'Connect Calendar'
+	                  : 'Continue'}
+	                <ArrowRight className="ml-2 h-4 w-4" />
+	              </Button>
+	            </div>
+	          </div>
         </Card>
       </div>
     </div>
