@@ -121,7 +121,6 @@ model Account {
   // Metadata
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
-  deletedAt             DateTime?
 
   // Indexes
   @@index([stripeCustomerId])
@@ -207,7 +206,6 @@ model Contact {
   lastContactedAt   DateTime?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
-  deletedAt         DateTime?
 
   // Indexes
   @@index([accountId])
