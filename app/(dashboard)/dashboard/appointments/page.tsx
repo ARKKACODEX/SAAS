@@ -68,7 +68,6 @@ export default async function AppointmentsPage({
   const limit = 20
   const offset = (page - 1) * limit
 
-  // Build filters
   const where: any = { accountId }
 
   if (searchParams.search) {
@@ -93,7 +92,6 @@ export default async function AppointmentsPage({
     where.status = searchParams.status
   }
 
-  // Fetch appointments with pagination
   const [appointments, totalAppointments] = await Promise.all([
     prisma.appointment.findMany({
       where,
@@ -107,31 +105,30 @@ export default async function AppointmentsPage({
 
   const totalPages = Math.ceil(totalAppointments / limit)
 
-  // Get appointment statistics
   const now = new Date()
-  const [confirmedCount, pendingCount, completedCount, upcomingCount] =
-    await Promise.all([
-      prisma.appointment.count({
-        where: { accountId, status: 'CONFIRMED' },
-      }),
-      prisma.appointment.count({
-        where: { accountId, status: 'SCHEDULED' },
-      }),
-      prisma.appointment.count({
-        where: { accountId, status: 'COMPLETED' },
-      }),
-      prisma.appointment.count({
-        where: {
-          accountId,
-          status: 'CONFIRMED',
-          startTime: { gte: now },
-        },
-      }),
-    ])
+  
+  const confirmedCount = await prisma.appointment.count({
+    where: { accountId, status: 'CONFIRMED' },
+  })
+  
+  const pendingCount = await prisma.appointment.count({
+    where: { accountId, status: 'SCHEDULED' },
+  })
+  
+  const completedCount = await prisma.appointment.count({
+    where: { accountId, status: 'COMPLETED' },
+  })
+  
+  const upcomingCount = await prisma.appointment.count({
+    where: {
+      accountId,
+      status: 'CONFIRMED',
+      startTime: { gte: now },
+    },
+  })
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
@@ -145,7 +142,6 @@ export default async function AppointmentsPage({
         </Button>
       </div>
 
-      {/* Statistics */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="p-4">
           <div className="flex items-center space-x-3">
@@ -204,7 +200,6 @@ export default async function AppointmentsPage({
         </Card>
       </div>
 
-      {/* Filters */}
       <Card className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
@@ -233,7 +228,6 @@ export default async function AppointmentsPage({
         </div>
       </Card>
 
-      {/* Appointments table */}
       <Card>
         <Table>
           <TableHeader>
@@ -269,7 +263,6 @@ export default async function AppointmentsPage({
                 const initials = `${appointment.contact?.firstName?.[0] || ''}${
                   appointment.contact?.lastName?.[0] || ''
                 }`.toUpperCase()
-                const isPast = new Date(appointment.startTime) < now
                 const isToday =
                   new Date(appointment.startTime).toDateString() ===
                   now.toDateString()
@@ -370,9 +363,7 @@ export default async function AppointmentsPage({
                             </Button>
                           </a>
                         )}
-                        <Link
-                          href={`/dashboard/appointments/${appointment.id}`}
-                        >
+                        <Link href={`/dashboard/appointments/${appointment.id}`}>
                           <Button variant="ghost" size="sm">
                             View
                           </Button>
@@ -386,7 +377,6 @@ export default async function AppointmentsPage({
           </TableBody>
         </Table>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between border-t px-4 py-3">
             <div className="text-sm text-muted-foreground">
