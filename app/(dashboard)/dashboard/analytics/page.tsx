@@ -116,13 +116,13 @@ export default async function AnalyticsPage({
     // Appointments by status
     prisma.appointment.groupBy({
       by: ['status'],
-      where: { accountId, createdAt: { gte: startDate }, deletedAt: null },
+      where: { accountId, createdAt: { gte: startDate } },
       _count: true,
     }),
 
     // Top contacts by interaction count
     prisma.contact.findMany({
-      where: { accountId, deletedAt: null },
+      where: { accountId },
       include: {
         _count: {
           select: {
@@ -193,7 +193,6 @@ export default async function AnalyticsPage({
       where: {
         accountId,
         createdAt: { gte: prevStartDate, lt: prevEndDate },
-        deletedAt: null,
       },
     }),
   ])
