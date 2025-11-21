@@ -82,19 +82,18 @@ export default async function AnalyticsPage({
     missedCallsCount,
   ] = await Promise.all([
     // Total counts
-    prisma.call.count({
+   prisma.call.count({
       where: { accountId, createdAt: { gte: startDate } },
     }),
     prisma.message.count({
       where: { accountId, createdAt: { gte: startDate } },
     }),
     prisma.appointment.count({
-      where: { accountId, createdAt: { gte: startDate }, deletedAt: null },
+      where: { accountId, createdAt: { gte: startDate } },
     }),
     prisma.contact.count({
-      where: { accountId, deletedAt: null },
+      where: { accountId },
     }),
-
     // Calls by day (simplified - in production use SQL grouping)
     prisma.call.findMany({
       where: { accountId, createdAt: { gte: startDate } },
