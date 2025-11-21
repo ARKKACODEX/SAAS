@@ -112,20 +112,19 @@ export default async function AppointmentsPage({
   const [confirmedCount, pendingCount, completedCount, upcomingCount] =
     await Promise.all([
       prisma.appointment.count({
-        where: { accountId, status: 'CONFIRMED', deletedAt: null },
+        where: { accountId, status: 'CONFIRMED' },
       }),
       prisma.appointment.count({
-        where: { accountId, status: 'SCHEDULED', deletedAt: null },
+        where: { accountId, status: 'SCHEDULED' },
       }),
       prisma.appointment.count({
-        where: { accountId, status: 'COMPLETED', deletedAt: null },
+        where: { accountId, status: 'COMPLETED' },
       }),
       prisma.appointment.count({
         where: {
           accountId,
           status: 'CONFIRMED',
           startTime: { gte: now },
-          deletedAt: null,
         },
       }),
     ])
@@ -360,7 +359,7 @@ export default async function AppointmentsPage({
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         {appointment.googleMeetLink && (
-                          <a
+                          
                             href={appointment.googleMeetLink}
                             target="_blank"
                             rel="noopener noreferrer"
