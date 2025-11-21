@@ -37,7 +37,7 @@ export async function provisionPhoneNumber(params: {
         areaCode,
         limit: 5,
       })
-     ) as any[]
+    ) as any[]
 
     if (numbers.length === 0) {
       throw new Error(`No phone numbers available in area code ${areaCode}`)
@@ -55,7 +55,7 @@ export async function provisionPhoneNumber(params: {
         statusCallbackMethod: 'POST',
         friendlyName: `ReplyHub - ${accountId}`,
       })
-    )
+    ) as any
 
     // Update account with phone number
     await prisma.account.update({
@@ -97,7 +97,7 @@ export async function sendSMS(params: {
         from: params.from,
         body: params.body,
       })
-    )
+    ) as any
 
     // Save to database
     if (params.contactId) {
@@ -156,7 +156,7 @@ export async function makeCall(params: {
         statusCallbackMethod: 'POST',
         record: true,
       })
-    )
+    ) as any
 
     // Save to database
     if (params.contactId) {
@@ -189,7 +189,7 @@ export async function getRecording(recordingSid: string) {
   }
 
   try {
-    const recording = await twilioClient.recordings(recordingSid).fetch()
+    const recording = await twilioClient.recordings(recordingSid).fetch() as any
     return {
       url: `https://api.twilio.com${recording.uri.replace('.json', '.mp3')}`,
       duration: parseInt(recording.duration),
