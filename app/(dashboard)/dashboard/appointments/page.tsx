@@ -25,13 +25,10 @@ import {
   Calendar as CalendarIcon,
   CalendarPlus,
   Clock,
-  User,
   MapPin,
   Search,
-  Filter,
   Video,
   CheckCircle2,
-  XCircle,
   AlertCircle,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -40,7 +37,6 @@ interface AppointmentsPageProps {
   searchParams: {
     search?: string
     status?: string
-    view?: string
     page?: string
   }
 }
@@ -106,19 +102,19 @@ export default async function AppointmentsPage({
   const totalPages = Math.ceil(totalAppointments / limit)
 
   const now = new Date()
-  
+
   const confirmedCount = await prisma.appointment.count({
     where: { accountId, status: 'CONFIRMED' },
   })
-  
+
   const pendingCount = await prisma.appointment.count({
     where: { accountId, status: 'SCHEDULED' },
   })
-  
+
   const completedCount = await prisma.appointment.count({
     where: { accountId, status: 'COMPLETED' },
   })
-  
+
   const upcomingCount = await prisma.appointment.count({
     where: {
       accountId,
@@ -352,7 +348,7 @@ export default async function AppointmentsPage({
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         {appointment.googleMeetLink && (
-                          
+                          <a
                             href={appointment.googleMeetLink}
                             target="_blank"
                             rel="noopener noreferrer"
