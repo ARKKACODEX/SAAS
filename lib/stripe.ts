@@ -13,10 +13,8 @@ export const stripe = process.env.NODE_ENV === 'production'
       apiVersion: '2023-10-16',
       typescript: true,
     })
-  : (stripeMock as any)
-  apiVersion: '2023-10-16',
-  typescript: true,
-})
+  : (stripeMock as any);
+
 
 /**
  * Create Stripe customer
