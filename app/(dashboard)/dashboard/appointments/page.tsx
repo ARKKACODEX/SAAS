@@ -69,7 +69,7 @@ export default async function AppointmentsPage({
   const offset = (page - 1) * limit
 
   // Build filters
-  const where: any = { accountId, deletedAt: null }
+  const where: any = { accountId }
 
   if (searchParams.search) {
     where.OR = [
