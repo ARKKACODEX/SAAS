@@ -221,6 +221,7 @@ model Contact {
 enum ContactSource {
   MANUAL
   PHONE_CALL
+  SMS
   FORM
   CHATBOT
   IMPORT
