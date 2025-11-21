@@ -37,7 +37,7 @@ export async function provisionPhoneNumber(params: {
         areaCode,
         limit: 5,
       })
-    )
+     ) as any[]
 
     if (numbers.length === 0) {
       throw new Error(`No phone numbers available in area code ${areaCode}`)
