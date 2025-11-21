@@ -55,7 +55,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   const offset = (page - 1) * limit
 
   // Build filters
-  const where: any = { accountId, deletedAt: null }
+  const where: any = { accountId }
 
   if (searchParams.search) {
     where.OR = [
@@ -92,12 +92,11 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   // Get contact statistics
   const [totalActive, newThisMonth] = await Promise.all([
     prisma.contact.count({
-      where: { accountId, deletedAt: null },
+      where: { accountId },
     }),
     prisma.contact.count({
       where: {
         accountId,
-        deletedAt: null,
         createdAt: {
           gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
         },
