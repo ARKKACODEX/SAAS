@@ -1,10 +1,8 @@
 export const runtime = 'nodejs';
-
 /**
  * Clerk Webhook Handler
  * Syncs user data between Clerk and our database
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
@@ -102,16 +100,16 @@ export async function POST(req: NextRequest) {
     if (eventType === 'user.deleted') {
       const { id } = evt.data
 
-      // Soft delete the user's account
+      // Delete the user and their account (cascade will handle related records)
       const user = await prisma.user.findUnique({
         where: { clerkId: id },
         include: { account: true },
       })
 
       if (user) {
-        await prisma.account.update({
-          where: { id: user.accountId },
-          data: { deletedAt: new Date() },
+        // Delete user first (cascade will handle account due to onDelete: Cascade)
+        await prisma.user.delete({
+          where: { clerkId: id },
         })
       }
 
@@ -123,4 +121,3 @@ export async function POST(req: NextRequest) {
     return handleAPIError(error)
   }
 }
-
